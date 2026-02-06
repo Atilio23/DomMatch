@@ -17,8 +17,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Header } from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Loader2, Upload } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
@@ -61,6 +61,8 @@ export default function AddPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | undefined>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { addAide } = useAidesMenageres();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -74,17 +76,53 @@ export default function AddPage() {
     },
   });
 
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldOnChange: (value: string) => void
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        toast({
+            variant: 'destructive',
+            title: 'Fichier trop lourd',
+            description: 'La taille de l\'image ne doit pas dépasser 2 Mo.',
+        });
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        setPhotoPreview(dataUrl);
+        fieldOnChange(dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     
     try {
-      const selectedPhoto = PlaceHolderImages.find(p => p.id === values.photo);
+      const imageUrl = values.photo;
+      let photoObject = PlaceHolderImages.find(p => p.imageUrl === imageUrl);
+
+      if (!photoObject) {
+          photoObject = {
+              id: `uploaded-${Date.now()}`,
+              imageUrl: imageUrl,
+              description: 'Photo de profil',
+              imageHint: 'person portrait',
+          };
+      }
 
       const newProfileData = {
         prenom: values.prenom,
         nom: values.nom,
         telephoneWhatsApp: values.telephoneWhatsApp,
-        photo: selectedPhoto || PlaceHolderImages[0],
+        photo: photoObject,
         quartier: values.quartier || '',
         age: values.age,
         typeService: values.typeService || [],
@@ -127,33 +165,63 @@ export default function AddPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   <div className='space-y-8'>
                      <FormField
-                        control={form.control}
-                        name="photo"
-                        render={({ field }) => (
+                      control={form.control}
+                      name="photo"
+                      render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Photo de profil</FormLabel>
-                            <FormControl>
-                                <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                className="grid grid-cols-3 sm:grid-cols-4 gap-4"
-                                >
-                                {PlaceHolderImages.slice(0, 8).map((image) => (
-                                    <FormItem key={image.id} className="relative aspect-square">
-                                    <FormControl>
-                                        <RadioGroupItem value={image.id} className="peer sr-only" />
-                                    </FormControl>
-                                    <FormLabel className="cursor-pointer rounded-full border-2 border-transparent peer-aria-checked:border-primary w-full h-full block">
-                                        <Image src={image.imageUrl} alt={image.description} fill className="object-cover rounded-full" />
-                                    </FormLabel>
-                                    </FormItem>
-                                ))}
-                                </RadioGroup>
-                            </FormControl>
-                            <FormMessage />
+                              <FormLabel>Photo de profil</FormLabel>
+                              <div className="flex items-start gap-6">
+                                  <div className="relative w-24 h-24 sm:w-32 sm:h-32 shrink-0">
+                                      <Image
+                                          src={photoPreview || "https://placehold.co/128x128/E2E8F0/A0AEC0?text=Photo"}
+                                          alt="Aperçu du profil"
+                                          fill
+                                          className="object-cover rounded-full border"
+                                      />
+                                  </div>
+                                  <div className="flex-grow space-y-2">
+                                      <FormControl>
+                                          <Input
+                                              type="file"
+                                              className="hidden"
+                                              ref={fileInputRef}
+                                              onChange={(e) => handleFileChange(e, field.onChange)}
+                                              accept="image/png, image/jpeg"
+                                          />
+                                      </FormControl>
+                                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                                          <Upload className="mr-2 h-4 w-4" />
+                                          Télécharger une photo
+                                      </Button>
+                                      <FormDescription>
+                                          Ou choisissez-en une dans la galerie ci-dessous.
+                                      </FormDescription>
+                                  </div>
+                              </div>
+                              <RadioGroup
+                                  onValueChange={(value) => {
+                                      field.onChange(value);
+                                      setPhotoPreview(value);
+                                  }}
+                                  value={field.value}
+                                  className="grid grid-cols-3 sm:grid-cols-4 gap-4 pt-4"
+                              >
+                                  {PlaceHolderImages.slice(0, 8).map((image) => (
+                                      <FormItem key={image.id} className="relative aspect-square">
+                                          <FormControl>
+                                              <RadioGroupItem value={image.imageUrl} className="peer sr-only" />
+                                          </FormControl>
+                                          <FormLabel className="cursor-pointer rounded-full border-2 border-transparent peer-aria-checked:border-primary w-full h-full block">
+                                              <Image src={image.imageUrl} alt={image.description} fill className="object-cover rounded-full" />
+                                          </FormLabel>
+                                      </FormItem>
+                                  ))}
+                              </RadioGroup>
+                              <FormMessage />
                           </FormItem>
-                        )}
-                      />
+                      )}
+                    />
+
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <FormField control={form.control} name="prenom" render={({ field }) => ( <FormItem><FormLabel>Prénom</FormLabel><FormControl><Input placeholder="Ex: Maria" {...field} /></FormControl><FormMessage /></FormItem> )} />

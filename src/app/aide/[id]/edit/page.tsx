@@ -3,9 +3,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useRouter, useParams, notFound } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -31,7 +31,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
 import { StarRating } from '@/components/StarRating';
 import type { UserProfile } from '@/types';
 import { useAidesMenageres } from '@/context/AidesMenageresContext';
@@ -77,10 +77,16 @@ export default function EditProfilePage() {
   const { getAideById, updateAide, loading: contextLoading } = useAidesMenageres();
   const [profile, setProfile] = useState<UserProfile | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | undefined>();
 
   useEffect(() => {
       if(profileId) {
-          setProfile(getAideById(profileId));
+          const p = getAideById(profileId);
+          setProfile(p);
+          if (p?.photo?.imageUrl) {
+            setPhotoPreview(p.photo.imageUrl);
+          }
       }
   }, [profileId, getAideById]);
 
@@ -93,7 +99,7 @@ export default function EditProfilePage() {
       form.reset({
         prenom: profile.prenom,
         nom: profile.nom,
-        photo: profile.photo?.id,
+        photo: profile.photo?.imageUrl,
         quartier: profile.quartier,
         typeService: profile.typeService,
         disponible: profile.disponible,
@@ -103,15 +109,52 @@ export default function EditProfilePage() {
         description: profile.description,
         telephoneWhatsApp: profile.telephoneWhatsApp,
       });
+      setPhotoPreview(profile.photo?.imageUrl);
     }
   }, [profile, form]);
+  
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldOnChange: (value: string) => void
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        toast({
+            variant: 'destructive',
+            title: 'Fichier trop lourd',
+            description: 'La taille de l\'image ne doit pas dépasser 2 Mo.',
+        });
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        setPhotoPreview(dataUrl);
+        fieldOnChange(dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!profileId) return;
     setIsSubmitting(true);
     try {
-      const selectedPhoto = PlaceHolderImages.find(p => p.id === values.photo);
-      const updatedData = { ...values, photo: selectedPhoto };
+      const imageUrl = values.photo;
+      let photoObject = PlaceHolderImages.find(p => p.imageUrl === imageUrl);
+
+      if (!photoObject) {
+        photoObject = {
+            id: `uploaded-${Date.now()}`,
+            imageUrl: imageUrl,
+            description: 'Photo de profil',
+            imageHint: 'person portrait',
+        };
+      }
+      
+      const updatedData = { ...values, photo: photoObject };
       updateAide(profileId, updatedData);
       toast({
         title: 'Profil mis à jour !',
@@ -154,28 +197,58 @@ export default function EditProfilePage() {
                     control={form.control}
                     name="photo"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Photo de profil</FormLabel>
-                        <FormControl>
+                        <FormItem>
+                            <FormLabel>Photo de profil</FormLabel>
+                            <div className="flex items-start gap-6">
+                                <div className="relative w-24 h-24 sm:w-32 sm:h-32 shrink-0">
+                                    <Image
+                                        src={photoPreview || "https://placehold.co/128x128/E2E8F0/A0AEC0?text=Photo"}
+                                        alt="Aperçu du profil"
+                                        fill
+                                        className="object-cover rounded-full border"
+                                    />
+                                </div>
+                                <div className="flex-grow space-y-2">
+                                    <FormControl>
+                                        <Input
+                                            type="file"
+                                            className="hidden"
+                                            ref={fileInputRef}
+                                            onChange={(e) => handleFileChange(e, field.onChange)}
+                                            accept="image/png, image/jpeg"
+                                        />
+                                    </FormControl>
+                                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                                        <Upload className="mr-2 h-4 w-4" />
+                                        Changer de photo
+                                    </Button>
+                                    <FormDescription>
+                                        Téléchargez une nouvelle photo (max 2Mo) ou choisissez-en une dans la galerie ci-dessous.
+                                    </FormDescription>
+                                </div>
+                            </div>
+                            
                             <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="grid grid-cols-3 sm:grid-cols-4 gap-4"
+                                onValueChange={(value) => {
+                                    field.onChange(value);
+                                    setPhotoPreview(value);
+                                }}
+                                value={field.value}
+                                className="grid grid-cols-3 sm:grid-cols-4 gap-4 pt-4"
                             >
-                            {PlaceHolderImages.slice(0, 8).map((image) => (
-                                <FormItem key={image.id} className="relative aspect-square">
-                                <FormControl>
-                                    <RadioGroupItem value={image.id} className="peer sr-only" />
-                                </FormControl>
-                                <FormLabel className="cursor-pointer rounded-full border-2 border-transparent peer-aria-checked:border-primary w-full h-full block">
-                                    <Image src={image.imageUrl} alt={image.description} fill className="object-cover rounded-full" />
-                                </FormLabel>
-                                </FormItem>
-                            ))}
+                                {PlaceHolderImages.slice(0, 8).map((image) => (
+                                    <FormItem key={image.id} className="relative aspect-square">
+                                    <FormControl>
+                                        <RadioGroupItem value={image.imageUrl} className="peer sr-only" />
+                                    </FormControl>
+                                    <FormLabel className="cursor-pointer rounded-full border-2 border-transparent peer-aria-checked:border-primary w-full h-full block">
+                                        <Image src={image.imageUrl} alt={image.description} fill className="object-cover rounded-full" />
+                                    </FormLabel>
+                                    </FormItem>
+                                ))}
                             </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                            <FormMessage />
+                        </FormItem>
                     )}
                   />
 
