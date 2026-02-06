@@ -57,6 +57,7 @@ const formSchema = z.object({
   // Aide-menagere specific fields
   photo: z.string().optional(),
   quartier: z.string().optional(),
+  age: z.coerce.number().optional(),
   typeService: z.array(z.string()).optional(),
   disponible: z.boolean().optional(),
   disponibilite: z.string().optional(),
@@ -65,14 +66,20 @@ const formSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas.",
   path: ["confirmPassword"],
-}).refine((data) => {
+}).superRefine((data, ctx) => {
     if (data.role === 'aide-menagere') {
-        return !!data.photo;
+        if (!data.photo) {
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Une photo de profil est requise.", path: ["photo"] });
+        }
+        if (!data.quartier) {
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Le quartier est requis.", path: ["quartier"] });
+        }
+        if (!data.age) {
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "L'âge est requis.", path: ["age"] });
+        } else if (data.age < 18) {
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "L'âge minimum est 18 ans.", path: ["age"] });
+        }
     }
-    return true;
-}, {
-    message: "Une photo de profil est requise.",
-    path: ["photo"],
 });
 
 
@@ -129,6 +136,7 @@ export default function SignupPage() {
         ...(values.role === 'aide-menagere' && {
           photo: selectedPhoto || PlaceHolderImages[0],
           quartier: values.quartier || '',
+          age: values.age,
           typeService: values.typeService || [],
           disponible: values.disponible,
           disponibilite: values.disponibilite || '',
@@ -262,11 +270,13 @@ export default function SignupPage() {
                       />
 
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <FormField control={form.control} name="experience" render={({ field }) => ( <FormItem><FormLabel>Années d'expérience</FormLabel><FormControl><Input type="number" placeholder="0" {...field} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
+                        <FormField control={form.control} name="age" render={({ field }) => ( <FormItem><FormLabel>Âge</FormLabel><FormControl><Input type="number" placeholder="Ex: 25" {...field} value={field.value ?? ''} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
                         <FormField control={form.control} name="quartier" render={({ field }) => ( <FormItem><FormLabel>Quartier</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value} disabled={!auth}><FormControl><SelectTrigger><SelectValue placeholder="Sélectionner un quartier" /></SelectTrigger></FormControl><SelectContent>{quartiers.map((quartier) => (<SelectItem key={quartier} value={quartier}>{quartier}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
                     </div>
 
-                    <FormField control={form.control} name="description" render={({ field }) => ( <FormItem><FormLabel>Courte description</FormLabel><FormControl><Textarea placeholder="Décrivez vos compétences..." {...field} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
+                    <FormField control={form.control} name="experience" render={({ field }) => ( <FormItem><FormLabel>Années d'expérience (optionnel)</FormLabel><FormControl><Input type="number" placeholder="0" {...field} value={field.value ?? ''} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
+
+                    <FormField control={form.control} name="description" render={({ field }) => ( <FormItem><FormLabel>Courte description (optionnel)</FormLabel><FormControl><Textarea placeholder="Décrivez vos compétences..." {...field} value={field.value ?? ''} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
                     
                     <FormField control={form.control} name="typeService" render={() => (
                       <FormItem>
@@ -287,7 +297,7 @@ export default function SignupPage() {
                       </FormItem>
                     )} />
 
-                    <FormField control={form.control} name="disponibilite" render={({ field }) => ( <FormItem><FormLabel>Détails de disponibilité</FormLabel><FormControl><Input placeholder="Ex: Lundi, Mercredi (matin)" {...field} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
+                    <FormField control={form.control} name="disponibilite" render={({ field }) => ( <FormItem><FormLabel>Détails de disponibilité</FormLabel><FormControl><Input placeholder="Ex: Lundi, Mercredi (matin)" {...field} value={field.value ?? ''} disabled={!auth} /></FormControl><FormMessage /></FormItem> )} />
                     
                      <FormField control={form.control} name="disponible" render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">

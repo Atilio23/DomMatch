@@ -114,8 +114,7 @@ export default function AidePage() {
                       <User className="h-5 w-5 text-muted-foreground shrink-0" />
                       <div>
                         <h4 className="text-sm text-muted-foreground">Âge</h4>
-                        {/*<p className="font-semibold">{aide.age} ans</p>*/}
-                        <p className="font-semibold">Non spécifié</p> 
+                        <p className="font-semibold">{aide.age ? `${aide.age} ans` : 'Non spécifié'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">

@@ -13,6 +13,7 @@ export type UserProfile = {
   // housekeeper-specific fields
   photo?: ImagePlaceholder;
   quartier?: string;
+  age?: number;
   typeService?: string[];
   disponible?: boolean;
   disponibilite?: string;

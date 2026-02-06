@@ -60,6 +60,7 @@ const formSchema = z.object({
   }),
   disponible: z.boolean().default(false),
   disponibilite: z.string().min(2, "La disponibilité doit être renseignée."),
+  age: z.coerce.number().int().min(18, "L'âge doit être d'au moins 18 ans."),
   experience: z.coerce.number().int().min(0, "L'expérience ne peut être négative.").optional(),
   description: z.string().max(300, "La description ne peut pas dépasser 300 caractères.").optional(),
   telephoneWhatsApp: z.string().min(8, "Le numéro doit contenir au moins 8 chiffres."),
@@ -92,6 +93,7 @@ export default function EditProfilePage() {
         typeService: profile.typeService,
         disponible: profile.disponible,
         disponibilite: profile.disponibilite,
+        age: profile.age,
         experience: profile.experience,
         description: profile.description,
         telephoneWhatsApp: profile.telephoneWhatsApp,
@@ -188,6 +190,7 @@ export default function EditProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-6 pt-4">
                   <div className="grid grid-cols-2 gap-6">
+                     <FormField control={form.control} name="age" render={({ field }) => ( <FormItem><FormLabel>Âge</FormLabel><FormControl><Input type="number" placeholder="Ex: 25" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
                      <FormField control={form.control} name="experience" render={({ field }) => ( <FormItem><FormLabel>Années d'expérience</FormLabel><FormControl><Input type="number" placeholder="Optionnel" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
                   </div>
                    <FormField control={form.control} name="description" render={({ field }) => ( <FormItem><FormLabel>Courte description</FormLabel><FormControl><Textarea placeholder="Décrivez vos compétences..." className="resize-none" {...field} value={field.value || ''}/></FormControl><FormDescription>Maximum 300 caractères.</FormDescription><FormMessage /></FormItem>)} />

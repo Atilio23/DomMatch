@@ -49,6 +49,9 @@
         "quartier": {
           "type": "string"
         },
+        "age": {
+          "type": "number"
+        },
         "typeService": {
           "type": "array",
           "items": {

@@ -1,6 +1,6 @@
 'use client';
 
-import { Star } from 'lucide-react';
+import { Star, StarHalf } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type StarRatingProps = {
@@ -19,7 +19,8 @@ export function StarRating({
   reviewCount,
 }: StarRatingProps) {
   const fullStars = Math.floor(rating);
-  const emptyStars = totalStars - fullStars;
+  const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+  const emptyStars = totalStars - fullStars - halfStar;
 
   return (
     <div className={cn('flex items-center gap-2 text-sm', className)}>
@@ -27,6 +28,7 @@ export function StarRating({
         {Array.from({ length: fullStars }).map((_, i) => (
           <Star key={`full-${i}`} size={size} className="text-yellow-400 fill-yellow-400" />
         ))}
+        {halfStar > 0 && <StarHalf key="half" size={size} className="text-yellow-400 fill-yellow-400" />}
         {Array.from({ length: emptyStars }).map((_, i) => (
           <Star key={`empty-${i}`} size={size} className="text-gray-300" />
         ))}
