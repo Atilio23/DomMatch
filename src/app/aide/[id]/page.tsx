@@ -11,7 +11,7 @@ import { MapPin, Sparkles, CalendarDays, User, Award, Info, Pencil, Loader2 } fr
 import { ContactButton } from '@/components/ContactButton';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
-import { useDoc, useUser } from '@/firebase';
+import { useDoc } from '@/firebase';
 import type { UserProfile } from '@/types';
 import { doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -21,7 +21,6 @@ export default function AidePage() {
   const params = useParams();
   const aideId = params.id as string;
   const firestore = useFirestore();
-  const { user } = useUser();
 
   const aideDocRef = useMemo(() => {
     if (!firestore || !aideId) return null;
@@ -45,8 +44,6 @@ export default function AidePage() {
     notFound();
   }
 
-  const isOwner = user?.uid === aide.uid;
-
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <Header backHref="/" />
@@ -66,14 +63,12 @@ export default function AidePage() {
                 />
               )}
                <div className="absolute top-4 right-4">
-                 {isOwner && (
-                    <Link href={`/profile/edit`} passHref>
-                      <Button variant="secondary" className="bg-card/80 backdrop-blur-sm">
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Modifier mon profil
-                      </Button>
-                    </Link>
-                 )}
+                  <Link href={`/aide/${aide.uid}/edit`} passHref>
+                    <Button variant="secondary" className="bg-card/80 backdrop-blur-sm">
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Modifier le profil
+                    </Button>
+                  </Link>
                </div>
             </div>
             <CardContent className="p-6 md:p-8">

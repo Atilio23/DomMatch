@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -28,12 +28,12 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Header } from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, Upload } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { StarRating } from '@/components/StarRating';
-import { useDoc, useFirestore, useUser } from '@/firebase';
+import { useDoc, useFirestore } from '@/firebase';
 import type { UserProfile } from '@/types';
 import { doc, updateDoc } from 'firebase/firestore';
 
@@ -69,14 +69,15 @@ const formSchema = z.object({
 export default function EditProfilePage() {
   const { toast } = useToast();
   const router = useRouter();
-  const { user, loading: userLoading } = useUser();
+  const params = useParams();
+  const profileId = params.id as string;
   const firestore = useFirestore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userDocRef = useMemo(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [firestore, user]);
+    if (!firestore || !profileId) return null;
+    return doc(firestore, 'users', profileId);
+  }, [firestore, profileId]);
 
   const { data: profile, loading: profileLoading } = useDoc<UserProfile>(userDocRef);
 
@@ -101,12 +102,6 @@ export default function EditProfilePage() {
     }
   }, [profile, form]);
 
-  useEffect(() => {
-    if (!userLoading && !user) {
-      router.replace('/login');
-    }
-  }, [user, userLoading, router]);
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!userDocRef) return;
     setIsSubmitting(true);
@@ -114,9 +109,9 @@ export default function EditProfilePage() {
       await updateDoc(userDocRef, values);
       toast({
         title: 'Profil mis à jour !',
-        description: `Votre profil a été modifié avec succès.`,
+        description: `Le profil a été modifié avec succès.`,
       });
-      router.push(`/aide/${user?.uid}`);
+      router.push(`/aide/${profileId}`);
     } catch (error) {
       console.error(error);
       toast({
@@ -129,7 +124,7 @@ export default function EditProfilePage() {
     }
   }
 
-  if (userLoading || profileLoading) {
+  if (profileLoading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -138,19 +133,12 @@ export default function EditProfilePage() {
   }
 
   if (!profile) {
-    return (
-      <div className="bg-background min-h-screen flex flex-col">
-        <Header backHref="/" />
-        <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
-           <div className="text-center">Profil introuvable.</div>
-        </main>
-      </div>
-    );
+    notFound();
   }
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
-      <Header backHref={`/aide/${user?.uid}`} />
+      <Header backHref={`/aide/${profileId}`} />
       <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
         <div className="max-w-2xl mx-auto">
           <Form {...form}>
@@ -163,14 +151,14 @@ export default function EditProfilePage() {
                   <div className="flex items-center gap-6">
                      <div className="relative group w-32 h-32 shrink-0">
                       <Image
-                        src={profile.photo.imageUrl}
+                        src={profile.photo?.imageUrl || ''}
                         alt={`Photo de ${profile.prenom}`}
                         width={128}
                         height={128}
                         className="rounded-full object-cover aspect-square border-4 border-card"
                       />
                     </div>
-                     <p className="text-sm text-muted-foreground">La modification de la photo de profil n'est pas disponible. Pour en changer, veuillez vous réinscrire.</p>
+                     <p className="text-sm text-muted-foreground">La modification de la photo de profil n'est pas disponible. Pour en changer, veuillez créer un nouveau profil.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                       <FormField control={form.control} name="prenom" render={({ field }) => ( <FormItem><FormLabel>Prénom</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />

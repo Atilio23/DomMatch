@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import type { UserProfile } from '@/types';
-import { collection, query, where } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Loader2 } from 'lucide-react';
 
@@ -25,7 +25,7 @@ export default function Home() {
   const firestore = useFirestore();
   const aidesQuery = useMemo(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'users'), where('role', '==', 'aide-menagere'));
+    return collection(firestore, 'users');
   }, [firestore]);
 
   const { data: aides, loading } = useCollection<UserProfile>(aidesQuery);

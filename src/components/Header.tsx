@@ -1,19 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { ArrowLeft, PlusCircle, User, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { ArrowLeft, PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { useUser } from '@/firebase';
-import { getAuth } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 
 const Logo = () => (
@@ -29,19 +17,6 @@ type HeaderProps = {
 
 
 export function Header({ backHref }: HeaderProps) {
-  const { user, profile, loading } = useUser();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    const auth = getAuth();
-    await auth.signOut();
-    router.push('/');
-  };
-  
-  const getInitials = (firstName?: string, lastName?: string) => {
-    if (!firstName || !lastName) return 'U';
-    return `${firstName[0]}${lastName[0]}`.toUpperCase();
-  }
 
   return (
     <header className="bg-card shadow-sm sticky top-0 z-40 border-b">
@@ -63,52 +38,14 @@ export function Header({ backHref }: HeaderProps) {
         )}
         
         <div className='flex items-center gap-2'>
-          {loading ? (
-            <div className='h-8 w-20 bg-muted rounded-md animate-pulse' />
-          ) : user ? (
-             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                  <Avatar>
-                    <AvatarImage src={profile?.photo?.imageUrl} alt={`${profile?.prenom} ${profile?.nom}`} />
-                    <AvatarFallback>{getInitials(profile?.prenom, profile?.nom)}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>
-                  <p>{profile?.prenom} {profile?.nom}</p>
-                  <p className="text-xs text-muted-foreground font-normal">{profile?.email}</p>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {profile?.role === 'aide-menagere' && (
-                  <DropdownMenuItem onClick={() => router.push(`/aide/${user.uid}`)}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Mon Profil</span>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={handleLogout}>
-                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Se déconnecter</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-2">
-               <Button variant="ghost" asChild>
-                <Link href="/login">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Connexion
-                </Link>
-              </Button>
+           {!backHref && (
               <Button asChild>
-                <Link href="/signup">
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Inscription
+                <Link href="/add">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Ajouter un profil
                 </Link>
               </Button>
-            </div>
-          )}
+            )}
         </div>
       </div>
     </header>

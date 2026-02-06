@@ -5,20 +5,6 @@
       "description": "Represents a user in the system.",
       "type": "object",
       "properties": {
-        "uid": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string",
-          "format": "email"
-        },
-        "role": {
-          "type": "string",
-          "enum": [
-            "employeur",
-            "aide-menagere"
-          ]
-        },
         "prenom": {
           "type": "string"
         },
@@ -78,18 +64,10 @@
         }
       },
       "required": [
-        "uid",
-        "email",
-        "role",
         "prenom",
         "nom"
       ]
     }
-  },
-  "auth": {
-    "providers": [
-      "password"
-    ]
   },
   "firestore": {
     "/users/{userId}": {
