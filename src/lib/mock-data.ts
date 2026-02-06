@@ -20,7 +20,7 @@ export type AideMenagere = {
   disponible: boolean;
   disponibilite: string;
   experience?: number;
-  description: string;
+  description?: string;
   rating: number;
   reviewCount: number;
   telephoneWhatsApp: string;

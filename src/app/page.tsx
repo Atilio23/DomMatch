@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { AideMenagereCard } from '@/components/AideMenagereCard';
-import { aidesMenageres } from '@/lib/mock-data';
+import { useAidesMenageres } from '@/contexts/AidesMenageresContext';
 import {
   Select,
   SelectContent,
@@ -16,22 +16,24 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import type { AideMenagere } from '@/lib/mock-data';
 
 export default function Home() {
-  const [filteredAides, setFilteredAides] = useState(aidesMenageres);
+  const { aides } = useAidesMenageres();
+  const [filteredAides, setFilteredAides] = useState<AideMenagere[]>(aides);
   const [selectedQuartier, setSelectedQuartier] = useState('all');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
 
   // Memoize unique values to prevent recalculation on every render
   const quartiers = useMemo(
-    () => ['all', ...Array.from(new Set(aidesMenageres.map((a) => a.quartier)))].sort(),
-    []
+    () => ['all', ...Array.from(new Set(aides.map((a) => a.quartier)))].sort(),
+    [aides]
   );
 
   const services = useMemo(
-    () => Array.from(new Set(aidesMenageres.flatMap((a) => a.typeService))).sort(),
-    []
+    () => Array.from(new Set(aides.flatMap((a) => a.typeService))).sort(),
+    [aides]
   );
 
   const handleServiceChange = (service: string) => {
@@ -43,7 +45,7 @@ export default function Home() {
   };
 
   const applyFilters = () => {
-    let result = aidesMenageres;
+    let result = aides;
 
     if (onlyAvailable) {
       result = result.filter((aide) => aide.disponible);
@@ -62,11 +64,18 @@ export default function Home() {
     setFilteredAides(result);
   };
 
+  // Re-apply filters when the base data changes to show new/updated aides
+  useEffect(() => {
+    applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aides]);
+
+
   const resetFilters = () => {
     setSelectedQuartier('all');
     setSelectedServices([]);
     setOnlyAvailable(false);
-    setFilteredAides(aidesMenageres);
+    setFilteredAides(aides);
   };
 
   return (

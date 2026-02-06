@@ -3,9 +3,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,11 +29,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Header } from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { aidesMenageres } from '@/lib/mock-data';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Upload } from 'lucide-react';
 import { StarRating } from '@/components/StarRating';
+import { useAidesMenageres } from '@/contexts/AidesMenageresContext';
+import type { AideMenagere } from '@/lib/mock-data';
 
 const services = [
   { id: 'menage', label: 'Ménage' },
@@ -80,36 +81,59 @@ export default function EditAidePage() {
   const router = useRouter();
   const params = useParams();
   const aideId = params.id as string;
-
-  const aide = aidesMenageres.find((a) => a.id === aideId);
-
-  if (!aide) {
-    notFound();
-  }
+  
+  const { getAide, updateAide } = useAidesMenageres();
+  const [aide, setAide] = useState<AideMenagere | undefined>(undefined);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      prenom: aide.prenom,
-      nom: aide.nom,
-      age: aide.age,
-      quartier: aide.quartier,
-      typeService: aide.typeService,
-      disponible: aide.disponible,
-      disponibilite: aide.disponibilite,
-      experience: aide.experience,
-      description: aide.description,
-      telephoneWhatsApp: aide.telephoneWhatsApp,
-    },
   });
 
+  useEffect(() => {
+    if (aideId) {
+      const foundAide = getAide(aideId);
+      setAide(foundAide);
+      if (foundAide) {
+        form.reset({
+          prenom: foundAide.prenom,
+          nom: foundAide.nom,
+          age: foundAide.age,
+          quartier: foundAide.quartier,
+          typeService: foundAide.typeService,
+          disponible: foundAide.disponible,
+          disponibilite: foundAide.disponibilite,
+          experience: foundAide.experience,
+          description: foundAide.description,
+          telephoneWhatsApp: foundAide.telephoneWhatsApp,
+        });
+      }
+    }
+  }, [aideId, getAide, form]);
+
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    if (!aideId) return;
+    updateAide(aideId, values);
     toast({
       title: 'Profil mis à jour !',
       description: `Le profil de ${values.prenom} a été modifié avec succès.`,
     });
     router.push(`/aide/${aideId}`);
+  }
+
+  if (aide === undefined) {
+    return (
+      <div className="bg-background min-h-screen flex flex-col">
+        <Header backHref="/" />
+        <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
+           <div className="text-center">Chargement...</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!aide) {
+    notFound();
   }
 
   return (

@@ -1,8 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Header } from '@/components/Header';
-import { aidesMenageres } from '@/lib/mock-data';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -10,15 +11,33 @@ import { MapPin, Sparkles, CalendarDays, User, Award, Info, Pencil } from 'lucid
 import { ContactButton } from '@/components/ContactButton';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
+import { useAidesMenageres } from '@/contexts/AidesMenageresContext';
+import { useEffect, useState } from 'react';
+import type { AideMenagere } from '@/lib/mock-data';
 
-type AidePageProps = {
-  params: {
-    id: string;
-  };
-};
+export default function AidePage() {
+  const params = useParams();
+  const { getAide } = useAidesMenageres();
+  const [aide, setAide] = useState<AideMenagere | undefined>(undefined);
 
-export default function AidePage({ params }: AidePageProps) {
-  const aide = aidesMenageres.find((a) => a.id === params.id);
+  useEffect(() => {
+    if (params.id) {
+      const foundAide = getAide(params.id as string);
+      setAide(foundAide);
+    }
+  }, [params.id, getAide]);
+
+  if (aide === undefined) {
+    // Loading state
+    return (
+      <div className="bg-background min-h-screen flex flex-col">
+        <Header backHref="/" />
+        <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
+           <div className="text-center">Chargement...</div>
+        </main>
+      </div>
+    );
+  }
 
   if (!aide) {
     notFound();
@@ -78,7 +97,7 @@ export default function AidePage({ params }: AidePageProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold">À propos</h3>
-                    <p className="text-muted-foreground mt-1">{aide.description}</p>
+                    <p className="text-muted-foreground mt-1">{aide.description || 'Aucune description fournie.'}</p>
                   </div>
                 </div>
 

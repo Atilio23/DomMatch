@@ -28,6 +28,8 @@ import { Header } from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { useAidesMenageres } from '@/contexts/AidesMenageresContext';
+import { Textarea } from '@/components/ui/textarea';
 
 const services = [
   { id: 'menage', label: 'Ménage' },
@@ -61,6 +63,8 @@ const formSchema = z.object({
   }),
   disponible: z.boolean().default(true),
   disponibilite: z.string().min(2, { message: 'La disponibilité doit être renseignée.' }),
+  experience: z.coerce.number().int().min(0, "L'expérience ne peut être négative.").optional(),
+  description: z.string().max(300, "La description ne peut pas dépasser 300 caractères.").optional(),
   telephoneWhatsApp: z
     .string()
     .min(8, { message: 'Le numéro doit contenir au moins 8 chiffres.' })
@@ -70,6 +74,7 @@ const formSchema = z.object({
 export default function AddAidePage() {
   const { toast } = useToast();
   const router = useRouter();
+  const { addAide } = useAidesMenageres();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,18 +86,18 @@ export default function AddAidePage() {
       disponible: true,
       disponibilite: '',
       telephoneWhatsApp: '',
+      experience: 0,
+      description: '',
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, you'd send this to a server.
-    console.log(values);
+    addAide(values);
     toast({
       title: 'Profil enregistré !',
       description: `Le profil de ${values.prenom} a été ajouté avec succès.`,
     });
-    // Redirect to home page after a short delay
-    setTimeout(() => router.push('/'), 1000);
+    router.push('/');
   }
 
   return (
@@ -132,17 +137,31 @@ export default function AddAidePage() {
                     />
                   </div>
                   
-                  <FormField
-                      control={form.control}
-                      name="age"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Âge</FormLabel>
-                          <FormControl><Input type="number" {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="age"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Âge</FormLabel>
+                            <FormControl><Input type="number" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="experience"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Années d'expérience</FormLabel>
+                            <FormControl><Input type="number" placeholder="0" {...field} value={field.value ?? ''} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                  </div>
+
 
                   <FormField
                     control={form.control}
@@ -164,6 +183,26 @@ export default function AddAidePage() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Courte description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Décrivez vos compétences et votre personnalité en quelques mots."
+                              className="resize-none"
+                              {...field}
+                              value={field.value || ''}
+                            />
+                          </FormControl>
+                           <FormDescription>Optionnel. Maximum 300 caractères.</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                   <FormField
                     control={form.control}
