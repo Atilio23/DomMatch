@@ -2,51 +2,51 @@
   "placeholderImages": [
     {
       "id": "person1",
-      "description": "Portrait d'une femme souriante avec un foulard coloré",
-      "imageUrl": "https://images.unsplash.com/photo-1621893930853-2765039366f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMG1hbGl8ZW58MHx8fHwxNzIxMTE0NTg4fDA&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "femme souriante"
+      "description": "Portrait d'une femme souriante avec une fleur dans les cheveux.",
+      "imageUrl": "https://images.unsplash.com/photo-1594956342813-5b5f13d72659?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "femme fleur"
     },
     {
       "id": "person2",
-      "description": "Femme portant un panier sur la tête dans un village",
-      "imageUrl": "https://images.unsplash.com/photo-1606552220844-3c6b2b4b4b2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMGJ1cmtpbmElMjBmYXNvfGVufDB8fHx8MTcyMTExNDExNHww&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "femme travaillant"
+      "description": "Femme préparant un repas dans une cuisine traditionnelle.",
+      "imageUrl": "https://images.unsplash.com/photo-1611042553365-9b101441c135?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "femme cuisine"
     },
     {
       "id": "person3",
-      "description": "Portrait d'une femme avec un foulard jaune",
-      "imageUrl": "https://images.unsplash.com/photo-1605581379743-f1a23d4a6549?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhZnJpY2FuJTIwd29tYW4lMjBoZWFkc2NhcmZ8ZW58MHx8fHwxNzIxMTEzOTYyfDA&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "femme portrait"
+      "description": "Jeune femme lisant un livre assise sur des marches.",
+      "imageUrl": "https://images.unsplash.com/photo-1529752353932-555169a710b3?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "femme lecture"
     },
     {
       "id": "person4",
-      "description": "Femme souriante dans un marché local",
-      "imageUrl": "https://images.unsplash.com/photo-1543088242-2144a49a1236?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBtYXJrZXR8ZW58MHx8fHwxNzIxMTEzNTc0fDA&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "femme marche"
+      "description": "Commerçante souriante tenant un ananas dans un marché.",
+      "imageUrl": "https://images.unsplash.com/photo-1533512913459-83c27113e2f9?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "femme marché"
     },
     {
       "id": "person5",
-      "description": "Profil d'une femme avec un foulard orange",
-      "imageUrl": "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMHByb2ZpbGV8ZW58MHx8fHwxNzcwMzQyMjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "femme profil"
-    },
-    {
-      "id": "person6",
-      "description": "Portrait d'une femme avec une coiffure traditionnelle",
-      "imageUrl": "https://images.unsplash.com/photo-1599423693876-232a59925238?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWxpYW4lMjB3b21hbnxlbnwwfHx8fDE3MTc2MjU3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "femme malienne"
-    },
-    {
-      "id": "person7",
-      "description": "Une femme souriante sur un fond coloré",
-      "imageUrl": "https://images.unsplash.com/photo-1581456495146-65a71b2c8e52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfHNlYXJjaHw1fHxwb3J0cmFpdHxlbnwwfHx8fDE2NjE1ODUzOTU&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "Portrait d'une jeune femme au regard doux.",
+      "imageUrl": "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?q=80&w=1080&auto=format&fit=crop",
       "imageHint": "femme portrait"
     },
     {
+      "id": "person6",
+      "description": "Artisane travaillant sur une machine à coudre.",
+      "imageUrl": "https://images.unsplash.com/photo-1610813150539-0c680b189314?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "femme couture"
+    },
+    {
+      "id": "person7",
+      "description": "Femme travaillant dans un champ, souriante.",
+      "imageUrl": "https://images.unsplash.com/photo-1609121833235-3341499b8b32?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "femme champ"
+    },
+    {
       "id": "person8",
-      "description": "Femme en tenue jaune souriant à la caméra",
-      "imageUrl": "https://images.unsplash.com/photo-1534732805988-37517f2297c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhZnJpY2FuJTIwd29tYW4lMjBzbWlsaW5nfGVufDB8fHx8MTcyMTExMzU3NHww&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "femme souriante"
+      "description": "Mère tenant son enfant dans ses bras.",
+      "imageUrl": "https://images.unsplash.com/photo-1602442442666-6804a25c68e1?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "mère enfant"
     }
   ]
 }
