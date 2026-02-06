@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "person1",
+      "description": "Portrait of Maria",
+      "imageUrl": "https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc3MDI5MjkyOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "person2",
+      "description": "Portrait of Fatima",
+      "imageUrl": "https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzcwMjk4NjkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "person3",
+      "description": "Portrait of Amina",
+      "imageUrl": "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzAzNzk4Mjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman professional"
+    },
+    {
+      "id": "person4",
+      "description": "Portrait of Jeanne",
+      "imageUrl": "https://images.unsplash.com/photo-1663550910669-e338f90daf02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMGhhcHB5fGVufDB8fHx8MTc3MDMwMTc5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman happy"
+    },
+    {
+      "id": "person5",
+      "description": "Portrait of Sophie",
+      "imageUrl": "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMHByb2ZpbGV8ZW58MHx8fHwxNzcwMzQyMjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman profile"
+    },
+    {
+      "id": "person6",
+      "description": "Portrait of Bintou",
+      "imageUrl": "https://images.unsplash.com/photo-1679611978819-f10168367155?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMGZhY2V8ZW58MHx8fHwxNzcwMzY0NzMxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman face"
+    }
+  ]
 }
