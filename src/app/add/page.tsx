@@ -27,6 +27,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Header } from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 
 const services = [
   { id: 'menage', label: 'Ménage' },
@@ -51,23 +52,18 @@ const quartiers = [
 ];
 
 const formSchema = z.object({
-  prenom: z.string().min(2, {
-    message: 'Le prénom doit contenir au moins 2 caractères.',
-  }),
-  quartier: z.string({
-    required_error: 'Veuillez sélectionner un quartier.',
-  }),
+  prenom: z.string().min(2, { message: 'Le prénom doit contenir au moins 2 caractères.' }),
+  nom: z.string().min(2, { message: 'Le nom doit contenir au moins 2 caractères.' }),
+  age: z.coerce.number().int().min(18, "L'âge doit être d'au moins 18 ans."),
+  quartier: z.string({ required_error: 'Veuillez sélectionner un quartier.' }),
   typeService: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'Vous devez sélectionner au moins un service.',
   }),
-  disponibilite: z.string().min(2, {
-    message: 'La disponibilité doit être renseignée.',
-  }),
+  disponible: z.boolean().default(true),
+  disponibilite: z.string().min(2, { message: 'La disponibilité doit être renseignée.' }),
   telephoneWhatsApp: z
     .string()
-    .min(8, {
-      message: 'Le numéro doit contenir au moins 8 chiffres.',
-    })
+    .min(8, { message: 'Le numéro doit contenir au moins 8 chiffres.' })
     .regex(/^\d+$/, { message: 'Le numéro de téléphone ne doit contenir que des chiffres.' }),
 });
 
@@ -79,7 +75,10 @@ export default function AddAidePage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       prenom: '',
+      nom: '',
+      age: 18,
       typeService: [],
+      disponible: true,
       disponibilite: '',
       telephoneWhatsApp: '',
     },
@@ -87,7 +86,6 @@ export default function AddAidePage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // In a real app, you'd send this to a server.
-    // For now, we'll just log it and show a toast.
     console.log(values);
     toast({
       title: 'Profil enregistré !',
@@ -109,19 +107,42 @@ export default function AddAidePage() {
             <CardContent className="pt-4">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="prenom"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Prénom</FormLabel>
+                          <FormControl><Input placeholder="Ex: Maria" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="nom"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom</FormLabel>
+                          <FormControl><Input placeholder="Ex: Traoré" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
                   <FormField
-                    control={form.control}
-                    name="prenom"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Prénom</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ex: Maria" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      control={form.control}
+                      name="age"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Âge</FormLabel>
+                          <FormControl><Input type="number" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                   <FormField
                     control={form.control}
@@ -131,15 +152,11 @@ export default function AddAidePage() {
                         <FormLabel>Quartier</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Sélectionner un quartier" />
-                            </SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder="Sélectionner un quartier" /></SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {quartiers.map((quartier) => (
-                              <SelectItem key={quartier} value={quartier}>
-                                {quartier}
-                              </SelectItem>
+                              <SelectItem key={quartier} value={quartier}>{quartier}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -155,9 +172,7 @@ export default function AddAidePage() {
                       <FormItem>
                         <div className="mb-4">
                           <FormLabel>Types de service</FormLabel>
-                          <FormDescription>
-                            Sélectionnez les services proposés.
-                          </FormDescription>
+                          <FormDescription>Sélectionnez les services proposés.</FormDescription>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           {services.map((item) => (
@@ -167,27 +182,18 @@ export default function AddAidePage() {
                               name="typeService"
                               render={({ field }) => {
                                 return (
-                                  <FormItem
-                                    key={item.id}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                  >
+                                  <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
                                     <FormControl>
                                       <Checkbox
                                         checked={field.value?.includes(item.label)}
                                         onCheckedChange={(checked) => {
                                           return checked
                                             ? field.onChange([...(field.value || []), item.label])
-                                            : field.onChange(
-                                                (field.value || []).filter(
-                                                  (value) => value !== item.label
-                                                )
-                                              );
+                                            : field.onChange((field.value || []).filter((value) => value !== item.label));
                                         }}
                                       />
                                     </FormControl>
-                                    <FormLabel className="font-normal cursor-pointer">
-                                      {item.label}
-                                    </FormLabel>
+                                    <FormLabel className="font-normal cursor-pointer">{item.label}</FormLabel>
                                   </FormItem>
                                 );
                               }}
@@ -198,19 +204,30 @@ export default function AddAidePage() {
                       </FormItem>
                     )}
                   />
+                  
+                   <FormField
+                    control={form.control}
+                    name="disponible"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">Disponible immédiatement</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
                     name="disponibilite"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Disponibilité</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ex: Lundi, Mercredi (matin)" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Soyez aussi précis que possible (jours, heures).
-                        </FormDescription>
+                        <FormLabel>Détails de disponibilité</FormLabel>
+                        <FormControl><Input placeholder="Ex: Lundi, Mercredi (matin)" {...field} /></FormControl>
+                        <FormDescription>Soyez aussi précis que possible (jours, heures).</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -222,12 +239,8 @@ export default function AddAidePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Numéro WhatsApp</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ex: 76123456" {...field} />
-                        </FormControl>
-                         <FormDescription>
-                          Numéro sans l'indicatif du pays (+223).
-                        </FormDescription>
+                        <FormControl><Input placeholder="Ex: 76123456" {...field} /></FormControl>
+                         <FormDescription>Numéro sans l'indicatif du pays (+223).</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

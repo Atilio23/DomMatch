@@ -15,11 +15,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 
 export default function Home() {
   const [filteredAides, setFilteredAides] = useState(aidesMenageres);
   const [selectedQuartier, setSelectedQuartier] = useState('all');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
 
   // Memoize unique values to prevent recalculation on every render
   const quartiers = useMemo(
@@ -43,6 +45,10 @@ export default function Home() {
   const applyFilters = () => {
     let result = aidesMenageres;
 
+    if (onlyAvailable) {
+      result = result.filter((aide) => aide.disponible);
+    }
+    
     if (selectedQuartier !== 'all') {
       result = result.filter((aide) => aide.quartier === selectedQuartier);
     }
@@ -59,6 +65,7 @@ export default function Home() {
   const resetFilters = () => {
     setSelectedQuartier('all');
     setSelectedServices([]);
+    setOnlyAvailable(false);
     setFilteredAides(aidesMenageres);
   };
 
@@ -75,8 +82,8 @@ export default function Home() {
           </p>
 
           <Card className="mb-10 md:mb-16 shadow-sm">
-            <CardContent className="p-4 md:p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <CardContent className="p-4 md:p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
                 <div className="space-y-2">
                   <Label htmlFor="quartier-filter">Quartier</Label>
                   <Select value={selectedQuartier} onValueChange={setSelectedQuartier}>
@@ -114,7 +121,13 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
+
+               <div className="flex items-center space-x-2">
+                <Switch id="available-only" checked={onlyAvailable} onCheckedChange={setOnlyAvailable} />
+                <Label htmlFor="available-only">Afficher uniquement les personnes disponibles</Label>
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2 border-t border-border">
                  <Button variant="ghost" onClick={resetFilters} className="w-full sm:w-auto">Réinitialiser</Button>
                  <Button onClick={applyFilters} className="w-full sm:w-auto">Appliquer les filtres</Button>
               </div>
