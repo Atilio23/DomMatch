@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 const Logo = () => (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-foreground">
@@ -7,18 +8,30 @@ const Logo = () => (
     </svg>
 )
 
-export function Header() {
+type HeaderProps = {
+  backHref?: string;
+};
+
+
+export function Header({ backHref }: HeaderProps) {
   return (
     <header className="bg-card shadow-sm sticky top-0 z-40 border-b">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="bg-primary p-2 rounded-lg shadow">
-            <Logo />
-          </div>
-          <span className="text-2xl font-bold font-headline text-foreground tracking-tight">
-            DomiMatch
-          </span>
-        </Link>
+        {backHref ? (
+          <Link href={backHref} className="flex items-center gap-2 text-foreground hover:text-muted-foreground transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+            <span className="font-semibold">Retour</span>
+          </Link>
+        ) : (
+          <Link href="/" className="flex items-center gap-3">
+            <div className="bg-primary p-2 rounded-lg shadow">
+              <Logo />
+            </div>
+            <span className="text-2xl font-bold font-headline text-foreground tracking-tight">
+              DomiMatch
+            </span>
+          </Link>
+        )}
       </div>
     </header>
   );
