@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter, useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -33,9 +33,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Loader2 } from 'lucide-react';
 import { StarRating } from '@/components/StarRating';
-import { useDoc, useFirestore } from '@/firebase';
 import type { UserProfile } from '@/types';
-import { doc, updateDoc } from 'firebase/firestore';
+import { useAidesMenageres } from '@/context/AidesMenageresContext';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 
 const services = [
   { id: 'menage', label: 'Ménage' },
@@ -54,6 +56,7 @@ const quartiers = [
 const formSchema = z.object({
   prenom: z.string().min(2, "Le prénom doit contenir au moins 2 caractères."),
   nom: z.string().min(2, "Le nom doit contenir au moins 2 caractères."),
+  photo: z.string({ required_error: "Une photo de profil est requise." }),
   quartier: z.string({ required_error: 'Veuillez sélectionner un quartier.' }),
   typeService: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'Vous devez sélectionner au moins un service.',
@@ -71,15 +74,15 @@ export default function EditProfilePage() {
   const router = useRouter();
   const params = useParams();
   const profileId = params.id as string;
-  const firestore = useFirestore();
+  const { getAideById, updateAide, loading: contextLoading } = useAidesMenageres();
+  const [profile, setProfile] = useState<UserProfile | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const userDocRef = useMemo(() => {
-    if (!firestore || !profileId) return null;
-    return doc(firestore, 'users', profileId);
-  }, [firestore, profileId]);
-
-  const { data: profile, loading: profileLoading } = useDoc<UserProfile>(userDocRef);
+  useEffect(() => {
+      if(profileId) {
+          setProfile(getAideById(profileId));
+      }
+  }, [profileId, getAideById]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -90,6 +93,7 @@ export default function EditProfilePage() {
       form.reset({
         prenom: profile.prenom,
         nom: profile.nom,
+        photo: profile.photo?.id,
         quartier: profile.quartier,
         typeService: profile.typeService,
         disponible: profile.disponible,
@@ -103,10 +107,12 @@ export default function EditProfilePage() {
   }, [profile, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!userDocRef) return;
+    if (!profileId) return;
     setIsSubmitting(true);
     try {
-      await updateDoc(userDocRef, values);
+      const selectedPhoto = PlaceHolderImages.find(p => p.id === values.photo);
+      const updatedData = { ...values, photo: selectedPhoto };
+      updateAide(profileId, updatedData);
       toast({
         title: 'Profil mis à jour !',
         description: `Le profil a été modifié avec succès.`,
@@ -124,16 +130,12 @@ export default function EditProfilePage() {
     }
   }
 
-  if (profileLoading) {
+  if (contextLoading || !profile) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (!profile) {
-    notFound();
   }
 
   return (
@@ -148,18 +150,35 @@ export default function EditProfilePage() {
                   <CardTitle>Informations principales</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-4">
-                  <div className="flex items-center gap-6">
-                     <div className="relative group w-32 h-32 shrink-0">
-                      <Image
-                        src={profile.photo?.imageUrl || ''}
-                        alt={`Photo de ${profile.prenom}`}
-                        width={128}
-                        height={128}
-                        className="rounded-full object-cover aspect-square border-4 border-card"
-                      />
-                    </div>
-                     <p className="text-sm text-muted-foreground">La modification de la photo de profil n'est pas disponible. Pour en changer, veuillez créer un nouveau profil.</p>
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="photo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Photo de profil</FormLabel>
+                        <FormControl>
+                            <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="grid grid-cols-3 sm:grid-cols-4 gap-4"
+                            >
+                            {PlaceHolderImages.slice(0, 8).map((image) => (
+                                <FormItem key={image.id} className="relative aspect-square">
+                                <FormControl>
+                                    <RadioGroupItem value={image.id} className="peer sr-only" />
+                                </FormControl>
+                                <FormLabel className="cursor-pointer rounded-full border-2 border-transparent peer-aria-checked:border-primary w-full h-full block">
+                                    <Image src={image.imageUrl} alt={image.description} fill className="object-cover rounded-full" />
+                                </FormLabel>
+                                </FormItem>
+                            ))}
+                            </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <div className="grid grid-cols-2 gap-4">
                       <FormField control={form.control} name="prenom" render={({ field }) => ( <FormItem><FormLabel>Prénom</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
                       <FormField control={form.control} name="nom" render={({ field }) => ( <FormItem><FormLabel>Nom</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />

@@ -17,18 +17,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Header } from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { addDoc, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { UserProfile } from '@/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useFirestore } from '@/firebase';
+import { useAidesMenageres } from '@/context/AidesMenageresContext';
 
 const services = [
   { id: 'menage', label: 'Ménage' },
@@ -63,7 +61,7 @@ export default function AddPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const db = useFirestore();
+  const { addAide } = useAidesMenageres();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,23 +74,13 @@ export default function AddPage() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     
-    if (!db) {
-      toast({
-        variant: "destructive",
-        title: "Erreur de configuration",
-        description: "La connexion à Firebase a échoué.",
-      });
-      setLoading(false);
-      return;
-    }
-
     try {
       const selectedPhoto = PlaceHolderImages.find(p => p.id === values.photo);
 
-      const newProfile: Omit<UserProfile, 'uid'> = {
+      const newProfileData = {
         prenom: values.prenom,
         nom: values.nom,
         telephoneWhatsApp: values.telephoneWhatsApp,
@@ -104,17 +92,15 @@ export default function AddPage() {
         disponibilite: values.disponibilite || '',
         experience: values.experience || 0,
         description: values.description || '',
-        rating: 0,
-        reviewCount: 0,
       };
 
-      const docRef = await addDoc(collection(db, "users"), newProfile);
+      const newProfile = addAide(newProfileData);
 
       toast({
         title: 'Profil créé !',
         description: 'Le nouveau profil a été ajouté avec succès.',
       });
-      router.push(`/aide/${docRef.id}`);
+      router.push(`/aide/${newProfile.uid}`);
     } catch (error: any) {
       console.error(error);
       toast({

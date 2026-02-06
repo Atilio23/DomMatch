@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { AideMenagereCard } from '@/components/AideMenagereCard';
-import { useCollection } from '@/firebase';
 import {
   Select,
   SelectContent,
@@ -17,28 +16,18 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import type { UserProfile } from '@/types';
-import { collection } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 import { Loader2 } from 'lucide-react';
+import { useAidesMenageres } from '@/context/AidesMenageresContext';
 
 export default function Home() {
-  const firestore = useFirestore();
-  const aidesQuery = useMemo(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'users');
-  }, [firestore]);
-
-  const { data: aides, loading } = useCollection<UserProfile>(aidesQuery);
-
+  const { aides, loading } = useAidesMenageres();
   const [filteredAides, setFilteredAides] = useState<UserProfile[]>([]);
   const [selectedQuartier, setSelectedQuartier] = useState('all');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
 
   useEffect(() => {
-    if (aides) {
-      setFilteredAides(aides);
-    }
+    setFilteredAides(aides);
   }, [aides]);
 
   // Memoize unique values to prevent recalculation on every render
@@ -61,7 +50,6 @@ export default function Home() {
   };
 
   const applyFilters = () => {
-    if (!aides) return;
     let result = aides;
 
     if (onlyAvailable) {
@@ -85,9 +73,7 @@ export default function Home() {
     setSelectedQuartier('all');
     setSelectedServices([]);
     setOnlyAvailable(false);
-    if (aides) {
-      setFilteredAides(aides);
-    }
+    setFilteredAides(aides);
   };
 
   return (
@@ -107,7 +93,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
                 <div className="space-y-2">
                   <Label htmlFor="quartier-filter">Quartier</Label>
-                  <Select value={selectedQuartier} onValueChange={setSelectedQuartier} disabled={!aides}>
+                  <Select value={selectedQuartier} onValueChange={setSelectedQuartier} disabled={loading}>
                     <SelectTrigger id="quartier-filter" className="w-full">
                       <SelectValue placeholder="Tous les quartiers" />
                     </SelectTrigger>
@@ -130,7 +116,7 @@ export default function Home() {
                           id={`service-${service}`}
                           checked={selectedServices.includes(service)}
                           onCheckedChange={() => handleServiceChange(service)}
-                           disabled={!aides}
+                           disabled={loading}
                         />
                         <Label
                           htmlFor={`service-${service}`}
@@ -145,13 +131,13 @@ export default function Home() {
               </div>
 
                <div className="flex items-center space-x-2">
-                <Switch id="available-only" checked={onlyAvailable} onCheckedChange={setOnlyAvailable}  disabled={!aides}/>
+                <Switch id="available-only" checked={onlyAvailable} onCheckedChange={setOnlyAvailable}  disabled={loading}/>
                 <Label htmlFor="available-only">Afficher uniquement les personnes disponibles</Label>
               </div>
 
               <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2 border-t border-border">
-                 <Button variant="ghost" onClick={resetFilters} className="w-full sm:w-auto"  disabled={!aides}>Réinitialiser</Button>
-                 <Button onClick={applyFilters} className="w-full sm:w-auto"  disabled={!aides}>Appliquer les filtres</Button>
+                 <Button variant="ghost" onClick={resetFilters} className="w-full sm:w-auto"  disabled={loading}>Réinitialiser</Button>
+                 <Button onClick={applyFilters} className="w-full sm:w-auto"  disabled={loading}>Appliquer les filtres</Button>
               </div>
             </CardContent>
           </Card>

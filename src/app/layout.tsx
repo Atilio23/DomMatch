@@ -1,9 +1,9 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { FirebaseClientProvider } from '@/firebase';
 import { PT_Sans } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { AidesMenageresProvider } from '@/context/AidesMenageresContext';
 
 const ptSans = PT_Sans({ 
   subsets: ['latin'],
@@ -25,9 +25,9 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={cn("font-body antialiased", ptSans.variable)}>
-        <FirebaseClientProvider>
+        <AidesMenageresProvider>
           {children}
-        </FirebaseClientProvider>
+        </AidesMenageresProvider>
         <Toaster />
       </body>
     </html>

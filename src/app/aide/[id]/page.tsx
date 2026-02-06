@@ -11,23 +11,22 @@ import { MapPin, Sparkles, CalendarDays, User, Award, Info, Pencil, Loader2 } fr
 import { ContactButton } from '@/components/ContactButton';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
-import { useDoc } from '@/firebase';
 import type { UserProfile } from '@/types';
-import { doc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import { useAidesMenageres } from '@/context/AidesMenageresContext';
 
 export default function AidePage() {
   const params = useParams();
   const aideId = params.id as string;
-  const firestore = useFirestore();
+  const { getAideById, loading } = useAidesMenageres();
+  const [aide, setAide] = useState<UserProfile | undefined>(undefined);
 
-  const aideDocRef = useMemo(() => {
-    if (!firestore || !aideId) return null;
-    return doc(firestore, 'users', aideId);
-  }, [firestore, aideId]);
+  useEffect(() => {
+      if (aideId) {
+          setAide(getAideById(aideId));
+      }
+  }, [aideId, getAideById]);
 
-  const { data: aide, loading } = useDoc<UserProfile>(aideDocRef);
 
   if (loading) {
     return (
@@ -41,7 +40,20 @@ export default function AidePage() {
   }
 
   if (!aide) {
-    notFound();
+    // Give it a moment for the state to update from context
+    if (!loading) {
+      setTimeout(() => {
+        if (!aide) notFound();
+      }, 500);
+    }
+    return (
+      <div className="bg-background min-h-screen flex flex-col">
+        <Header backHref="/" />
+        <main className="flex-grow container mx-auto px-4 py-8 sm:py-12 flex justify-center items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </main>
+      </div>
+    );
   }
 
   return (
