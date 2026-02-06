@@ -24,54 +24,54 @@ export const aidesMenageres: AideMenagere[] = [
     id: '1',
     prenom: 'Maria',
     photo: findImage('person1'),
-    quartier: 'Plateau',
+    quartier: 'ACI 2000',
     typeService: ['Ménage complet', 'Repassage'],
     disponibilite: 'Lundi, Mercredi, Vendredi',
-    telephoneWhatsApp: '2250102030405'
+    telephoneWhatsApp: '22376123456'
   },
   {
     id: '2',
     prenom: 'Fatima',
     photo: findImage('person2'),
-    quartier: 'Cocody',
+    quartier: 'Badalabougou',
     typeService: ['Ménage', 'Cuisine'],
     disponibilite: 'Mardi, Jeudi',
-    telephoneWhatsApp: '2250203040506'
+    telephoneWhatsApp: '22366123456'
   },
   {
     id: '3',
     prenom: 'Amina',
     photo: findImage('person3'),
-    quartier: 'Riviera',
+    quartier: 'Hippodrome',
     typeService: ['Garde d\'enfants', 'Ménage'],
     disponibilite: 'Temps plein',
-    telephoneWhatsApp: '2250304050607'
+    telephoneWhatsApp: '22375123456'
   },
   {
     id: '4',
     prenom: 'Jeanne',
     photo: findImage('person4'),
-    quartier: 'Marcory',
+    quartier: 'Sébénikoro',
     typeService: ['Repassage', 'Courses'],
     disponibilite: 'Week-ends',
-    telephoneWhatsApp: '2250405060708'
+    telephoneWhatsApp: '22378123456'
   },
   {
     id: '5',
     prenom: 'Sophie',
     photo: findImage('person5'),
-    quartier: 'Treichville',
+    quartier: 'Baco Djicoroni',
     typeService: ['Ménage complet', 'Cuisine'],
     disponibilite: 'Lundi au Vendredi (matin)',
-    telephoneWhatsApp: '2250506070809'
+    telephoneWhatsApp: '22370123456'
   },
   {
     id: '6',
     prenom: 'Bintou',
     photo: findImage('person6'),
-    quartier: 'Yopougon',
+    quartier: 'Magnambougou',
     typeService: ['Ménage'],
     disponibilite: 'Mercredi',
-    telephoneWhatsApp: '2250607080910'
+    telephoneWhatsApp: '22365123456'
   }
 ];

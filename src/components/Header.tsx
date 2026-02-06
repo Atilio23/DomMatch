@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, PlusCircle } from 'lucide-react';
+import { Button } from './ui/button';
 
 const Logo = () => (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-foreground">
@@ -31,6 +32,14 @@ export function Header({ backHref }: HeaderProps) {
               DomiMatch
             </span>
           </Link>
+        )}
+        {!backHref && (
+            <Link href="/add" passHref>
+              <Button variant="outline">
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Ajouter
+              </Button>
+            </Link>
         )}
       </div>
     </header>
