@@ -142,7 +142,7 @@ export default function SignupPage() {
           disponibilite: values.disponibilite || '',
           experience: values.experience || 0,
           description: values.description || '',
-          rating: Math.round((Math.random() * (5 - 3.5) + 3.5) * 10) / 10,
+          rating: 0,
           reviewCount: 0,
         }),
       };

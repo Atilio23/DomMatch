@@ -169,11 +169,8 @@ export default function EditProfilePage() {
                         height={128}
                         className="rounded-full object-cover aspect-square border-4 border-card"
                       />
-                       <Button type="button" size="sm" variant="outline" className="absolute bottom-1 right-1 rounded-full opacity-80 group-hover:opacity-100" disabled>
-                          <Upload className="h-4 w-4" />
-                       </Button>
                     </div>
-                     <p className="text-sm text-muted-foreground">Pour changer de photo, veuillez vous réinscrire.</p>
+                     <p className="text-sm text-muted-foreground">La modification de la photo de profil n'est pas disponible. Pour en changer, veuillez vous réinscrire.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                       <FormField control={form.control} name="prenom" render={({ field }) => ( <FormItem><FormLabel>Prénom</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />

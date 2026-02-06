@@ -81,12 +81,6 @@ export default function Home() {
     setFilteredAides(result);
   };
   
-  useEffect(() => {
-    applyFilters();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aides]);
-
-
   const resetFilters = () => {
     setSelectedQuartier('all');
     setSelectedServices([]);

@@ -18,6 +18,10 @@ export function StarRating({
   className,
   reviewCount,
 }: StarRatingProps) {
+  if (reviewCount === 0 || reviewCount == null) {
+    return <p className={cn("text-sm text-muted-foreground", className)}>Pas encore d'évaluation</p>;
+  }
+
   const fullStars = Math.floor(rating);
   const halfStar = rating % 1 >= 0.5 ? 1 : 0;
   const emptyStars = totalStars - fullStars - halfStar;
@@ -35,7 +39,7 @@ export function StarRating({
       </div>
       <p className="text-muted-foreground">
         <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
-        {reviewCount != null && ` (${reviewCount} avis)`}
+        {`(${reviewCount} avis)`}
       </p>
     </div>
   );
