@@ -2,51 +2,51 @@
   "placeholderImages": [
     {
       "id": "person1",
-      "description": "Portrait of a smiling Malian woman",
-      "imageUrl": "https://images.unsplash.com/photo-1599423693876-232a59925238?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWxpYW4lMjB3b21hbnxlbnwwfHx8fDE3MTc2MjU3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "malian woman"
+      "description": "Portrait d'une femme souriante avec un foulard coloré",
+      "imageUrl": "https://images.unsplash.com/photo-1621893930853-2765039366f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMG1hbGl8ZW58MHx8fHwxNzIxMTE0NTg4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "femme souriante"
     },
     {
       "id": "person2",
-      "description": "Portrait of a young African woman",
-      "imageUrl": "https://images.unsplash.com/photo-1606992385194-4601140cf362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYWxpYW4lMjB3b21hbnxlbnwwfHx8fDE3MTc2MjU3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "african woman"
+      "description": "Femme portant un panier sur la tête dans un village",
+      "imageUrl": "https://images.unsplash.com/photo-1606552220844-3c6b2b4b4b2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMGJ1cmtpbmElMjBmYXNvfGVufDB8fHx8MTcyMTExNDExNHww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "femme travaillant"
     },
     {
       "id": "person3",
-      "description": "Professional portrait of a woman",
-      "imageUrl": "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzAzNzk4Mjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman professional"
+      "description": "Portrait d'une femme avec un foulard jaune",
+      "imageUrl": "https://images.unsplash.com/photo-1605581379743-f1a23d4a6549?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhZnJpY2FuJTIwd29tYW4lMjBoZWFkc2NhcmZ8ZW58MHx8fHwxNzIxMTEzOTYyfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "femme portrait"
     },
     {
       "id": "person4",
-      "description": "A happy woman outdoors",
-      "imageUrl": "https://images.unsplash.com/photo-1663550910669-e338f90daf02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMGhhcHB5fGVufDB8fHx8MTc3MDMwMTc5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman happy"
+      "description": "Femme souriante dans un marché local",
+      "imageUrl": "https://images.unsplash.com/photo-1543088242-2144a49a1236?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBtYXJrZXR8ZW58MHx8fHwxNzIxMTEzNTc0fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "femme marche"
     },
     {
       "id": "person5",
-      "description": "Profile of a woman in an orange headscarf",
+      "description": "Profil d'une femme avec un foulard orange",
       "imageUrl": "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMHByb2ZpbGV8ZW58MHx8fHwxNzcwMzQyMjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman profile"
+      "imageHint": "femme profil"
     },
     {
       "id": "person6",
-      "description": "Close-up of a woman's face",
-      "imageUrl": "https://images.unsplash.com/photo-1554151228-14d9def656e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMGZhY2V8ZW58MHx8fHwxNjYxNTg1MzY4&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman face"
+      "description": "Portrait d'une femme avec une coiffure traditionnelle",
+      "imageUrl": "https://images.unsplash.com/photo-1599423693876-232a59925238?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWxpYW4lMjB3b21hbnxlbnwwfHx8fDE3MTc2MjU3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "femme malienne"
     },
     {
       "id": "person7",
-      "description": "A smiling woman with a colorful background",
+      "description": "Une femme souriante sur un fond coloré",
       "imageUrl": "https://images.unsplash.com/photo-1581456495146-65a71b2c8e52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfHNlYXJjaHw1fHxwb3J0cmFpdHxlbnwwfHx8fDE2NjE1ODUzOTU&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman portrait"
+      "imageHint": "femme portrait"
     },
     {
       "id": "person8",
-      "description": "Profile view of a woman looking away",
-      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDE5ODJ8MHwxfHNlYXJjaHwyfHxwb3J0cmFpdHxlbnwwfHx8fDE2NjE1ODUzOTU&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman portrait"
+      "description": "Femme en tenue jaune souriant à la caméra",
+      "imageUrl": "https://images.unsplash.com/photo-1534732805988-37517f2297c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhZnJpY2FuJTIwd29tYW4lMjBzbWlsaW5nfGVufDB8fHx8MTcyMTExMzU3NHww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "femme souriante"
     }
   ]
 }
