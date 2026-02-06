@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { AideMenagereCard } from '@/components/AideMenagereCard';
-import { useAidesMenageres } from '@/contexts/AidesMenageresContext';
+import { useCollection } from '@/firebase';
 import {
   Select,
   SelectContent,
@@ -16,23 +16,39 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import type { AideMenagere } from '@/lib/mock-data';
+import type { UserProfile } from '@/types';
+import { collection, query, where } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-  const { aides } = useAidesMenageres();
-  const [filteredAides, setFilteredAides] = useState<AideMenagere[]>(aides);
+  const firestore = useFirestore();
+  const aidesQuery = useMemo(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'users'), where('role', '==', 'aide-menagere'));
+  }, [firestore]);
+
+  const { data: aides, loading } = useCollection<UserProfile>(aidesQuery);
+
+  const [filteredAides, setFilteredAides] = useState<UserProfile[]>([]);
   const [selectedQuartier, setSelectedQuartier] = useState('all');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
 
+  useEffect(() => {
+    if (aides) {
+      setFilteredAides(aides);
+    }
+  }, [aides]);
+
   // Memoize unique values to prevent recalculation on every render
   const quartiers = useMemo(
-    () => ['all', ...Array.from(new Set(aides.map((a) => a.quartier)))].sort(),
+    () => ['all', ...Array.from(new Set(aides?.map((a) => a.quartier).filter(Boolean) as string[]))].sort(),
     [aides]
   );
 
   const services = useMemo(
-    () => Array.from(new Set(aides.flatMap((a) => a.typeService))).sort(),
+    () => Array.from(new Set(aides?.flatMap((a) => a.typeService).filter(Boolean) as string[])).sort(),
     [aides]
   );
 
@@ -45,6 +61,7 @@ export default function Home() {
   };
 
   const applyFilters = () => {
+    if (!aides) return;
     let result = aides;
 
     if (onlyAvailable) {
@@ -57,17 +74,16 @@ export default function Home() {
 
     if (selectedServices.length > 0) {
       result = result.filter((aide) =>
-        selectedServices.every((service) => aide.typeService.includes(service))
+        aide.typeService && selectedServices.every((service) => aide.typeService!.includes(service))
       );
     }
 
     setFilteredAides(result);
   };
-
-  // Re-apply filters when the base data changes to show new/updated aides
+  
   useEffect(() => {
     applyFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aides]);
 
 
@@ -75,7 +91,9 @@ export default function Home() {
     setSelectedQuartier('all');
     setSelectedServices([]);
     setOnlyAvailable(false);
-    setFilteredAides(aides);
+    if (aides) {
+      setFilteredAides(aides);
+    }
   };
 
   return (
@@ -95,7 +113,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
                 <div className="space-y-2">
                   <Label htmlFor="quartier-filter">Quartier</Label>
-                  <Select value={selectedQuartier} onValueChange={setSelectedQuartier}>
+                  <Select value={selectedQuartier} onValueChange={setSelectedQuartier} disabled={!aides}>
                     <SelectTrigger id="quartier-filter" className="w-full">
                       <SelectValue placeholder="Tous les quartiers" />
                     </SelectTrigger>
@@ -118,6 +136,7 @@ export default function Home() {
                           id={`service-${service}`}
                           checked={selectedServices.includes(service)}
                           onCheckedChange={() => handleServiceChange(service)}
+                           disabled={!aides}
                         />
                         <Label
                           htmlFor={`service-${service}`}
@@ -132,24 +151,33 @@ export default function Home() {
               </div>
 
                <div className="flex items-center space-x-2">
-                <Switch id="available-only" checked={onlyAvailable} onCheckedChange={setOnlyAvailable} />
+                <Switch id="available-only" checked={onlyAvailable} onCheckedChange={setOnlyAvailable}  disabled={!aides}/>
                 <Label htmlFor="available-only">Afficher uniquement les personnes disponibles</Label>
               </div>
 
               <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2 border-t border-border">
-                 <Button variant="ghost" onClick={resetFilters} className="w-full sm:w-auto">Réinitialiser</Button>
-                 <Button onClick={applyFilters} className="w-full sm:w-auto">Appliquer les filtres</Button>
+                 <Button variant="ghost" onClick={resetFilters} className="w-full sm:w-auto"  disabled={!aides}>Réinitialiser</Button>
+                 <Button onClick={applyFilters} className="w-full sm:w-auto"  disabled={!aides}>Appliquer les filtres</Button>
               </div>
             </CardContent>
           </Card>
 
-          {filteredAides.length > 0 ? (
+          {loading && (
+             <div className="flex justify-center items-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="ml-4 text-lg text-muted-foreground">Chargement des profils...</p>
+            </div>
+          )}
+
+          {!loading && filteredAides.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
               {filteredAides.map((aide) => (
-                <AideMenagereCard key={aide.id} aide={aide} />
+                <AideMenagereCard key={aide.uid} aide={aide} />
               ))}
             </div>
-          ) : (
+          )}
+          
+          {!loading && filteredAides.length === 0 && (
              <div className="text-center py-16 border-2 border-dashed rounded-lg">
               <p className="text-lg font-semibold text-foreground">Aucun résultat</p>
               <p className="text-muted-foreground mt-2 max-w-sm mx-auto">

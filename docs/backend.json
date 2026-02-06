@@ -1,0 +1,99 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "Represents a user in the system.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "employeur",
+            "aide-menagere"
+          ]
+        },
+        "prenom": {
+          "type": "string"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "telephoneWhatsApp": {
+          "type": "string"
+        },
+        "photo": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "imageUrl": {
+              "type": "string",
+              "format": "uri"
+            },
+            "imageHint": {
+              "type": "string"
+            }
+          }
+        },
+        "quartier": {
+          "type": "string"
+        },
+        "typeService": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disponible": {
+          "type": "boolean"
+        },
+        "disponibilite": {
+          "type": "string"
+        },
+        "experience": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "rating": {
+          "type": "number"
+        },
+        "reviewCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "role",
+        "prenom",
+        "nom"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password"
+    ]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/user"
+      },
+      "description": "Stores public profile information for each user."
+    }
+  }
+}
